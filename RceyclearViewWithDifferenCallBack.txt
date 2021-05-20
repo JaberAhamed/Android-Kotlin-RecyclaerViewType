@@ -1,0 +1,233 @@
+package com.bidyava.solutions.adapter
+
+import android.os.Build
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.annotation.RequiresApi
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
+import com.bidyava.solutions.databinding.SingleBcsBannerItemListLayoutBinding
+import com.bidyava.solutions.models.pojoclass.BcsPackageAllInfo
+import com.bidyava.solutions.models.pojoclass.Subscription
+import io.noties.markwon.Markwon
+
+class BcsModelTestBannerAdapter :
+    ListAdapter<BcsPackageAllInfo, BcsModelTestBannerAdapter.ItemViewholder>(DIFF_CALLBACK) {
+
+    companion object {
+
+        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<BcsPackageAllInfo>() {
+            override fun areItemsTheSame(
+                oldItem: BcsPackageAllInfo,
+                newItem: BcsPackageAllInfo
+            ): Boolean {
+                return oldItem.id == newItem.id
+            }
+
+            override fun areContentsTheSame(
+                oldItem: BcsPackageAllInfo,
+                newItem: BcsPackageAllInfo
+            ): Boolean {
+                return oldItem == newItem
+            }
+        }
+
+        var bcsModelTestBannerListener: BcsModelTestBannerListener? = null
+    }
+
+    /*companion object {
+
+    }*/
+
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): BcsModelTestBannerAdapter.ItemViewholder {
+
+        return ItemViewholder.from(parent)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    override fun onBindViewHolder(holder: BcsModelTestBannerAdapter.ItemViewholder, position: Int) {
+
+        holder.bind(getItem(position))
+
+        // holder.bindItems(topicCuriculamList[position])
+
+        /*
+*/
+    }
+
+    class ItemViewholder(val binding: SingleBcsBannerItemListLayoutBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        @RequiresApi(Build.VERSION_CODES.N)
+        fun bind(
+            item: BcsPackageAllInfo
+
+        ) {
+            binding.item = item
+            binding.executePendingBindings()
+
+            binding.llBcs.setOnClickListener {
+                bcsModelTestBannerListener?.bcsBannerAdopterListener(
+                    item.session_id, item.session.name, item.summary, item.details, item.price, item.subscription_status,item.id,item.subscribed
+                )
+            }
+            binding.tvSummeryInfo.setOnClickListener {
+                bcsModelTestBannerListener?.bcsBannerAdopterListener(
+                    item.session_id, item.session.name, item.summary, item.details, item.price, item.subscription_status,item.id,item.subscribed
+                )
+            }
+            if (item.session.name.contains("মডেল টেস্ট")) {
+
+                binding.tvBcsID.text = item.session.name.replace("মডেল টেস্ট", "")
+                binding.tvModelTestID.text = "মডেল টেস্ট"
+            } else {
+
+                binding.tvBcsID.text = item.session.name
+                binding.tvModelTestID.text = "মডেল টেস্ট"
+            }
+
+            var markwon = Markwon.create(binding.root.context)
+
+            markwon.setMarkdown(binding.tvSummeryInfo, item.summary)
+
+        }
+
+        companion object {
+            fun from(
+                parent: ViewGroup
+            ): BcsModelTestBannerAdapter.ItemViewholder {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val binding =
+                    SingleBcsBannerItemListLayoutBinding.inflate(layoutInflater, parent, false)
+                return BcsModelTestBannerAdapter.ItemViewholder(
+                    binding
+                )
+            }
+        }
+    }
+    interface BcsModelTestBannerListener {
+        fun bcsBannerAdopterListener(session_ID: Int, session_title: String, summary: String, details: String, fees: Int, status: String,packageId:Int,isSubscribed:Boolean)
+    }
+}
+
+
+// xml class with binding
+
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.bidyava.solutions.models.pojoclass.BcsPackageAllInfo" />
+
+
+    </data>
+
+    <FrameLayout
+        android:layout_width="186dp"
+        android:layout_height="210dp">
+
+
+        <LinearLayout
+            android:id="@+id/ll_bcs"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:paddingBottom="@dimen/padding_default"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/bcs_banner_bg"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/img_bcs_bannerID"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:scaleType="fitXY"
+                app:layout_constraintCircleRadius="2dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/modeltest" />
+
+            <TextView
+                android:id="@+id/tv_bcs_ID"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_default"
+                android:layout_marginEnd="5dp"
+                android:singleLine="true"
+                android:layout_marginTop="5dp"
+                android:textColor="@color/colorBlack_200"
+                android:textSize="16dp"
+                android:fontFamily="@font/poppins_medium"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/img_bcs_bannerID" />
+
+            <TextView
+                android:id="@+id/tv_model_testID"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_default"
+                android:textColor="@color/colorBlack_200"
+                android:textSize="@dimen/text_size_default"
+                android:visibility="gone"
+                app:layout_constraintStart_toEndOf="@+id/img_bcs_bannerID"
+                app:layout_constraintTop_toBottomOf="@+id/tv_bcs_ID"
+
+                />
+
+      <!--      <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constl_bcs_banner"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_marginStart="@dimen/margin_small"
+                android:layout_marginTop="@dimen/margin_small"
+                android:layout_marginEnd="@dimen/margin_small"
+                android:background="@drawable/explore_layout_bg"
+                app:layout_constraintCircleRadius="@dimen/margin_default"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>-->
+
+
+            <TextView
+                android:id="@+id/tv_summery_info"
+                android:paddingBottom="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/poppins_light"
+                android:layout_marginTop="8dp"
+                android:padding="8dp"
+                android:textColor="@color/colorBlack_400"
+                android:textSize="13sp"
+
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                 />
+
+
+
+
+
+
+        </LinearLayout>
+
+
+    </FrameLayout>
+</layout>
+
+

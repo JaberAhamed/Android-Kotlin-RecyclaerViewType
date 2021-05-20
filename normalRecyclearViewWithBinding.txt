@@ -1,0 +1,139 @@
+// Recyclear view class
+
+class AnswerSheetAdapter(
+    val answerList: ArrayList<OptionListItem>,
+    var subjectStartPosition: Int,
+    val context: Context
+) :
+
+    RecyclerView.Adapter<AnswerSheetAdapter.ViewHolder>() {
+
+    companion object {
+        var anserSheetPostion: AnswerSheetAdapterItemListener? = null
+    }
+
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): AnswerSheetAdapter.ViewHolder {
+        val inflater = LayoutInflater.from(parent.context)
+        val binding = SingleQuestionLisSummeryLayoutBinding.inflate(inflater, parent, false)
+        return ViewHolder(binding)
+    }
+
+    override fun onBindViewHolder(holder: AnswerSheetAdapter.ViewHolder, position: Int) {
+        val item = answerList[position]
+        subjectStartPosition = subjectStartPosition + 1
+
+        holder.binding.tvQuestionNumber.text = subjectStartPosition.toString()
+
+        if (item.isBookmared) {
+            holder.binding.imgBookmarked.visibility = View.VISIBLE
+        } else {
+            holder.binding.imgBookmarked.visibility = View.GONE
+        }
+
+        if (item.answerd) {
+            holder.binding.constlQuestionSheetNumberID
+                .setBackgroundResource(R.drawable.question_unanswered_bg)
+            holder.binding.tvQuestionNumber.setTextColor(ContextCompat.getColor(context, R.color.colorGreen_200))
+        }
+
+        holder.binding.constlQuestionSheetNumberID.setOnClickListener {
+            var quesitonPostion = holder.binding.tvQuestionNumber.text.toString()
+            anserSheetPostion?.anserSheetPosition(quesitonPostion.toInt() - 1)
+        }
+    }
+
+    override fun getItemCount(): Int {
+        return answerList.size
+    }
+
+    class ViewHolder(val binding: SingleQuestionLisSummeryLayoutBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(topic: Topic) {
+        }
+    }
+
+    interface AnswerSheetAdapterItemListener {
+        fun anserSheetPosition(position: Int)
+    }
+}
+
+
+// Recyclearview xml
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!--<androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_default"
+        >
+
+        <TextView
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="@dimen/margin_medium"
+            android:id="@+id/tv_subject_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_question_answer_sheet"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/margin_default"
+            app:layout_constraintTop_toBottomOf="@id/tv_subject_name"
+            tools:listitem="@layout/single_multiple_question_sheet_layout"
+            />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>-->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="@dimen/margin_default"
+        >
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constl_question_sheet_numberID"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:background="@drawable/question_answer_bg"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            >
+
+            <TextView
+                android:id="@+id/tv_question_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:textColor="@color/colorDeepblue_200"
+
+                android:textSize="@dimen/text_size_default"
+                android:textStyle="bold"
+                />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ImageView
+            android:id="@+id/img_bookmarked"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:visibility="gone"
+            android:src="@drawable/ic_bookmarked"
+            />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</layout>

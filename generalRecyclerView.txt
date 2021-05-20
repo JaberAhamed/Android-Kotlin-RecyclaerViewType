@@ -1,0 +1,237 @@
+// class adapter
+package com.bidyava.solutions.adapter
+
+import android.content.Context
+import android.graphics.drawable.GradientDrawable
+import android.os.Build
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.LinearLayout
+import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
+import androidx.core.view.get
+import androidx.recyclerview.widget.RecyclerView
+import com.bidyava.solutions.R
+import com.bidyava.solutions.databinding.HomeItemListLayoutBinding
+import com.bidyava.solutions.models.TopicCuriculam
+
+class HomeItemAdapter(
+    private val topicCuriculamList: ArrayList<TopicCuriculam>,
+    var  contex: Context
+
+) :
+    RecyclerView.Adapter<HomeItemAdapter.ViewHolder>() {
+
+    companion object {
+        var homeItemListener: HomeItemListener? = null
+    }
+
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): ViewHolder {
+
+        val inflater = LayoutInflater.from(parent.context)
+        val binding = HomeItemListLayoutBinding.inflate(inflater, parent, false)
+        return ViewHolder(binding)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.bindItems(topicCuriculamList[position])
+        topicCuriculamList[position]
+          setupIndecator(holder)
+
+        setCurrentIndecator(3,holder)
+
+
+      /*  val bgImg = arrayOf(
+            R.drawable.ic_arrow_right_blue,
+            R.drawable.ic_arrow_right_purple,
+            R.drawable.ic_arrow_right_green,
+            R.drawable.ic_arrow_right_orange
+        )
+        val bgcolor = arrayOf(
+            R.color.colorLightBlue_100,
+            R.color.colorLightPurple_100,
+            R.color.colorLightGreen_100,
+            R.color.colorLightOrange_100
+        )
+
+        val color = arrayOf(
+            R.color.colorBlue_txt,
+            R.color.colorPurple_txt,
+            R.color.colorGreen_txt,
+            R.color.colorOrange_txt
+        )*/
+
+
+//        holder.binding.llExploreItem.backgroundTintList =
+//            ContextCompat.getColorStateList(holder.binding.root.context, bgcolor[position % 4])
+       /* val myGrad =holder.binding.llExploreItem.background as GradientDrawable
+        myGrad.setColor(
+            ContextCompat.getColor(holder.binding.root.context,
+                bgcolor[position % 4]
+            )
+        )*/
+        holder.binding.llRootCoursessPreparation.setOnClickListener {
+            homeItemListener?.homeItemclicked()
+        }
+    }
+
+
+
+    override fun getItemCount(): Int {
+        return topicCuriculamList.size
+    }
+
+    class ViewHolder(val binding: HomeItemListLayoutBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        @RequiresApi(Build.VERSION_CODES.N)
+        fun bindItems(
+            topicCuriculam: TopicCuriculam
+
+        ) {
+            binding.item = topicCuriculam
+            binding.executePendingBindings()
+        }
+    }
+
+    interface HomeItemListener {
+        fun homeItemclicked()
+    }
+
+    fun setupIndecator(holder: HomeItemAdapter.ViewHolder) {
+
+        val indecator = arrayOfNulls<ImageView>(5)
+
+        val layoutParams: LinearLayout.LayoutParams =
+            LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+        layoutParams.setMargins(8, 0, 8, 0)
+        for (i in indecator.indices) {
+            indecator[i] = ImageView(contex)
+            indecator[i].apply {
+                this?.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        context,
+                        R.drawable.ic_star_disable
+                    )
+                )
+                this?.layoutParams = layoutParams
+            }
+            holder.binding.llIntecatorContainer.addView(indecator[i])
+        }
+    }
+
+    fun setCurrentIndecator(index: Int,holder: HomeItemAdapter.ViewHolder) {
+        val childCount = holder.binding.llIntecatorContainer.childCount
+        for (i in 0..3) {
+            val imageView = holder.binding.llIntecatorContainer[i] as ImageView
+
+            imageView.setImageDrawable(
+                ContextCompat.getDrawable(
+                    contex,
+                    R.drawable.ic_star_yellow
+                )
+            )
+        }
+
+    }
+}
+
+
+// xml 
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.bidyava.solutions.models.TopicCuriculam" />
+
+    </data>
+
+    <LinearLayout
+        android:id="@+id/ll_root_coursess_preparation"
+        android:orientation="vertical"
+        android:background="@color/colorWhite_100"
+        android:layout_width="200dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_height="wrap_content">
+
+
+            <LinearLayout
+
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="@dimen/margin_small"
+                    android:layout_marginEnd="8dp"
+                    android:scaleType="fitXY"
+                    app:imageResource="@{item.icon}" />
+
+                <TextView
+                    android:id="@+id/feedback_name"
+                    android:layout_marginTop="@dimen/margin_default"
+                    android:layout_marginLeft="8dp"
+                    android:text="@{item.title}"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textColor="@color/colorBlack_900"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:id="@+id/feddabak_user_name"
+                    android:layout_marginLeft="8dp"
+                    android:text="@{item.user_name}"
+                    android:fontFamily="@font/poppins_light"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+
+                <TextView
+                    android:id="@+id/feddabak_user_rating"
+                    android:layout_marginLeft="8dp"
+                    android:text="@{item.rating}"
+                    android:layout_marginTop="8dp"
+                    android:textColor="@color/colorBlack_900"
+                    android:textSize="@dimen/text_size_medium"
+                    android:fontFamily="@font/poppins_bold"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <LinearLayout
+                    android:id="@+id/ll_intecatorContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:orientation="horizontal"
+                    app:layout_constraintBottom_toTopOf="@+id/btn_login" />
+
+
+
+
+
+
+
+            </LinearLayout>
+
+    </LinearLayout>
+
+</layout>
